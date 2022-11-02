@@ -14,6 +14,8 @@ contract BurnNft is ERC721URIStorage {
     address public immutable KEEP_KEY_TOKEN;
     mapping(uint256 => Attr) public attributes;
 
+    event Burn(uint256 indexed itemId, uint256 amountVoted, string coinGeckoIdentifier);
+
     struct Attr {
         uint256 amountVoted;
         string coinGeckoIdentifier;
@@ -48,7 +50,6 @@ contract BurnNft is ERC721URIStorage {
         }
         return string(bstr);
     }
-
 
     function addressToString(address _address)
         public
@@ -99,12 +100,15 @@ contract BurnNft is ERC721URIStorage {
         return string(abi.encodePacked("data:application/json;base64,", json));
     }
 
-    function mintNFT(
-        uint256 _amountVoted,
-        string memory _coinGeckoIdentifier
-    ) public returns (uint256) {
-        ERC20Burnable(KEEP_KEY_TOKEN).burnFrom(msg.sender, _amountVoted);
+    function mintNFT(uint256 _amountVoted, string memory _coinGeckoIdentifier)
+        public
+        returns (uint256)
+    {
         uint256 newItemId = _tokenIds.current();
+
+        ERC20Burnable(KEEP_KEY_TOKEN).burnFrom(msg.sender, _amountVoted);
+        emit Burn(newItemId, _amountVoted, _coinGeckoIdentifier);
+
         _safeMint(msg.sender, newItemId);
         attributes[newItemId] = Attr(_amountVoted, _coinGeckoIdentifier);
         _tokenIds.increment();
