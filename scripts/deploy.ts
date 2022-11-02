@@ -2,16 +2,14 @@ import { ethers } from "hardhat";
 
 async function main() {
   const totalSupply = ethers.utils.parseEther("21000000");
-  const KeepKey = await ethers.getContractFactory("KeepKey");
-  const keepKey = await KeepKey.deploy(totalSupply);
+  const KeepKeyToken = await ethers.getContractFactory("KeepKeyToken");
+  const keepKeyToken = await KeepKeyToken.deploy(totalSupply);
 
-  await keepKey.deployed();
+  await keepKeyToken.deployed();
 
-  console.log(`KeepKey Token Deployed with total supply of ${totalSupply}`);
+  console.log(`KeepKey Token Deployed with total supply of ${totalSupply} at address ${keepKeyToken.address}`);
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
